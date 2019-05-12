@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.0</version>
-    <date>2018-11-26T10:47:15Z</date>
+    <date>2019-05-05T08:54:19Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -774,7 +774,7 @@
                     <status>0</status>
                     <value_type>3</value_type>
                     <allowed_hosts/>
-                    <units>B</units>
+                    <units>bps</units>
                     <snmpv3_contextname/>
                     <snmpv3_securityname/>
                     <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -803,6 +803,10 @@
                         <step>
                             <type>12</type>
                             <params>$['localhost:27017'].net_in</params>
+                        </step>
+                        <step>
+                            <type>1</type>
+                            <params>8</params>
                         </step>
                     </preprocessing>
                     <jmx_endpoint/>
@@ -840,7 +844,7 @@
                     <status>0</status>
                     <value_type>3</value_type>
                     <allowed_hosts/>
-                    <units>B</units>
+                    <units>bps</units>
                     <snmpv3_contextname/>
                     <snmpv3_securityname/>
                     <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -869,6 +873,10 @@
                         <step>
                             <type>12</type>
                             <params>$['localhost:27017'].net_out</params>
+                        </step>
+                        <step>
+                            <type>1</type>
+                            <params>8</params>
                         </step>
                     </preprocessing>
                     <jmx_endpoint/>
@@ -1654,6 +1662,50 @@
             </graph_items>
         </graph>
         <graph>
+            <name>MongoDB: Commands per second</name>
+            <width>900</width>
+            <height>200</height>
+            <yaxismin>0.0000</yaxismin>
+            <yaxismax>100.0000</yaxismax>
+            <show_work_period>1</show_work_period>
+            <show_triggers>1</show_triggers>
+            <type>0</type>
+            <show_legend>1</show_legend>
+            <show_3d>0</show_3d>
+            <percent_left>0.0000</percent_left>
+            <percent_right>0.0000</percent_right>
+            <ymin_type_1>0</ymin_type_1>
+            <ymax_type_1>0</ymax_type_1>
+            <ymin_item_1>0</ymin_item_1>
+            <ymax_item_1>0</ymax_item_1>
+            <graph_items>
+                <graph_item>
+                    <sortorder>0</sortorder>
+                    <drawtype>0</drawtype>
+                    <color>000000</color>
+                    <yaxisside>0</yaxisside>
+                    <calc_fnc>2</calc_fnc>
+                    <type>0</type>
+                    <item>
+                        <host>Template MongoDB mongostat</host>
+                        <key>mongostat.command.local</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>0</drawtype>
+                    <color>B4B4B4</color>
+                    <yaxisside>0</yaxisside>
+                    <calc_fnc>2</calc_fnc>
+                    <type>0</type>
+                    <item>
+                        <host>Template MongoDB mongostat</host>
+                        <key>mongostat.command.replicated</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
             <name>MongoDB: Network</name>
             <width>900</width>
             <height>200</height>
@@ -1674,9 +1726,9 @@
                 <graph_item>
                     <sortorder>0</sortorder>
                     <drawtype>0</drawtype>
-                    <color>1A7C11</color>
+                    <color>009900</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
@@ -1686,9 +1738,9 @@
                 <graph_item>
                     <sortorder>1</sortorder>
                     <drawtype>0</drawtype>
-                    <color>F63100</color>
+                    <color>000099</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
@@ -1720,7 +1772,7 @@
                     <drawtype>0</drawtype>
                     <color>BF00FF</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
@@ -1732,7 +1784,7 @@
                     <drawtype>0</drawtype>
                     <color>F63100</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
@@ -1744,7 +1796,7 @@
                     <drawtype>0</drawtype>
                     <color>F57F17</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
@@ -1756,7 +1808,7 @@
                     <drawtype>0</drawtype>
                     <color>00FF00</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
@@ -1768,35 +1820,11 @@
                     <drawtype>0</drawtype>
                     <color>00BFFF</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
                         <key>mongostat.getmore</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>5</sortorder>
-                    <drawtype>0</drawtype>
-                    <color>000000</color>
-                    <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
-                    <type>0</type>
-                    <item>
-                        <host>Template MongoDB mongostat</host>
-                        <key>mongostat.command.local</key>
-                    </item>
-                </graph_item>
-                <graph_item>
-                    <sortorder>6</sortorder>
-                    <drawtype>0</drawtype>
-                    <color>B4B4B4</color>
-                    <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
-                    <type>0</type>
-                    <item>
-                        <host>Template MongoDB mongostat</host>
-                        <key>mongostat.command.replicated</key>
                     </item>
                 </graph_item>
             </graph_items>
@@ -1824,7 +1852,7 @@
                     <drawtype>0</drawtype>
                     <color>1A7C11</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
@@ -1836,7 +1864,7 @@
                     <drawtype>0</drawtype>
                     <color>F63100</color>
                     <yaxisside>0</yaxisside>
-                    <calc_fnc>7</calc_fnc>
+                    <calc_fnc>2</calc_fnc>
                     <type>0</type>
                     <item>
                         <host>Template MongoDB mongostat</host>
