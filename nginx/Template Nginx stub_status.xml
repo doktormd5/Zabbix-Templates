@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
-    <version>4.0</version>
-    <date>2018-11-26T10:17:29Z</date>
+    <version>5.0</version>
+    <date>2020-09-16T16:23:13Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -19,706 +19,453 @@
             </groups>
             <applications>
                 <application>
-                    <name>Nginx stub_status</name>
+                    <name>Nginx status</name>
                 </application>
             </applications>
             <items>
                 <item>
-                    <name>stub_status</name>
-                    <type>19</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>ngx_stub_status</key>
+                    <name>nginx stub_status</name>
+                    <type>HTTP_AGENT</type>
+                    <key>nginx.stub_status</key>
                     <delay>30s</delay>
-                    <history>7d</history>
+                    <history>1h</history>
                     <trends>0</trends>
-                    <status>0</status>
-                    <value_type>4</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
+                    <value_type>TEXT</value_type>
+                    <description>The following status information is provided:&#13;
+Active connections - the current number of active client connections including Waiting connections.&#13;
+Accepts - the total number of accepted client connections.&#13;
+Handled - the total number of handled connections. Generally, the parameter value is the same as accepts unless some resource limits have been reached (for example, the worker_connections limit).&#13;
+Requests - the total number of client requests.&#13;
+Reading - the current number of connections where nginx is reading the request header.&#13;
+Writing - the current number of connections where nginx is writing the response back to the client.&#13;
+Waiting - the current number of idle client connections waiting for a request.</description>
                     <applications>
                         <application>
-                            <name>Nginx stub_status</name>
+                            <name>Nginx status</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
-                    <preprocessing/>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url>http://{HOST.CONN}:{$NGX_STATUS_PORT}/{$NGX_STATUS_URL}</url>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>0</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <master_item/>
+                    <url>{$NGINX.STUB_STATUS.SCHEME}://{HOST.CONN}:{$NGINX.STUB_STATUS.PORT}/{$NGINX.STUB_STATUS.LOCATION}</url>
+                    <retrieve_mode>BOTH</retrieve_mode>
+                    <triggers>
+                        <trigger>
+                            <expression>{nodata(10m)}=1 or {str(&quot;HTTP/1.1 200&quot;)}=0</expression>
+                            <name>Nginx: Failed to fetch stub status page (or no data for 10min)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
-                    <name>Accepted connections per sec</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>ngx_stub_status.accepts</key>
+                    <name>Nginx: connections accepted per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.accepted.rate</key>
                     <delay>0</delay>
                     <history>7d</history>
-                    <trends>365d</trends>
-                    <status>0</status>
-                    <value_type>0</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
+                    <value_type>FLOAT</value_type>
                     <description>The total number of accepted client connections</description>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
-                            <name>Nginx stub_status</name>
+                            <name>Nginx status</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>server accepts handled requests\s+([0-9]+) ([0-9]+) ([0-9]+)
 \1</params>
                         </step>
                         <step>
-                            <type>10</type>
+                            <type>CHANGE_PER_SECOND</type>
                             <params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
-                        <key>ngx_stub_status</key>
+                        <key>nginx.stub_status</key>
                     </master_item>
                 </item>
                 <item>
-                    <name>Active connections</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>ngx_stub_status.active</key>
+                    <name>Nginx: connections active</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.active</key>
                     <delay>0</delay>
                     <history>7d</history>
-                    <trends>365d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
                     <description>The current number of active client connections including Waiting connections</description>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
-                            <name>Nginx stub_status</name>
+                            <name>Nginx status</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>Active connections: ([0-9]+)
 \1</params>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
-                        <key>ngx_stub_status</key>
+                        <key>nginx.stub_status</key>
                     </master_item>
                 </item>
                 <item>
-                    <name>Handled connections per sec</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>ngx_stub_status.handled</key>
+                    <name>Nginx: connections dropped per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.dropped.rate</key>
                     <delay>0</delay>
                     <history>7d</history>
-                    <trends>365d</trends>
-                    <status>0</status>
-                    <value_type>0</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description>The total number of handled connections. Generally, the parameter value is the same as accepts unless some resource limits have been reached (for example, the worker_connections limit)</description>
-                    <inventory_link>0</inventory_link>
+                    <value_type>FLOAT</value_type>
+                    <description>The total number of dropped client connections</description>
                     <applications>
                         <application>
-                            <name>Nginx stub_status</name>
+                            <name>Nginx status</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>JAVASCRIPT</type>
+                            <params>var a = value.match(/server accepts handled requests\s+([0-9]+) ([0-9]+) ([0-9]+)/)
+if (a) {
+    return a[1]-a[2]
+}</params>
+                        </step>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>nginx.stub_status</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()} &gt; 0</expression>
+                            <name>Nginx: Connections drop rate &gt;0, some resource limits have been reached)</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Nginx: connections handled per sec</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.handled.rate</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>The total number of handled connections. Generally, the parameter value is the same as accepts unless some resource limits have been reached (for example, the worker_connections limit)</description>
+                    <applications>
+                        <application>
+                            <name>Nginx status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
                             <params>server accepts handled requests\s+([0-9]+) ([0-9]+) ([0-9]+)
 \2</params>
                         </step>
                         <step>
-                            <type>10</type>
+                            <type>CHANGE_PER_SECOND</type>
                             <params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
-                        <key>ngx_stub_status</key>
+                        <key>nginx.stub_status</key>
                     </master_item>
                 </item>
                 <item>
-                    <name>Connections reading</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>ngx_stub_status.Reading</key>
+                    <name>Nginx: connections reading</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.reading</key>
                     <delay>0</delay>
                     <history>7d</history>
-                    <trends>365d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
                     <description>The current number of connections where nginx is reading the request header</description>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
-                            <name>Nginx stub_status</name>
+                            <name>Nginx status</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
-                            <params>Reading: ([0-9]+) Writing: ([0-9]+) Waiting: ([0-9]+)
+                            <type>REGEX</type>
+                            <params>Reading: ([0-9]+)
 \1</params>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
-                        <key>ngx_stub_status</key>
+                        <key>nginx.stub_status</key>
                     </master_item>
                 </item>
                 <item>
-                    <name>Requests per sec</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>ngx_stub_status.requests</key>
+                    <name>Nginx: requests per second</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.requests.rate</key>
                     <delay>0</delay>
                     <history>7d</history>
-                    <trends>365d</trends>
-                    <status>0</status>
-                    <value_type>0</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
+                    <value_type>FLOAT</value_type>
                     <description>The total number of client requests</description>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
-                            <name>Nginx stub_status</name>
+                            <name>Nginx status</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
+                            <type>REGEX</type>
                             <params>server accepts handled requests\s+([0-9]+) ([0-9]+) ([0-9]+)
 \3</params>
                         </step>
                         <step>
-                            <type>10</type>
+                            <type>CHANGE_PER_SECOND</type>
                             <params/>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
-                        <key>ngx_stub_status</key>
+                        <key>nginx.stub_status</key>
                     </master_item>
                 </item>
                 <item>
-                    <name>Connections waiting</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>ngx_stub_status.Waiting</key>
+                    <name>Nginx: Version</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.version</key>
                     <delay>0</delay>
                     <history>7d</history>
-                    <trends>365d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Nginx status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>Server: nginx/(.+)
+\1</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>12h</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>nginx.stub_status</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{diff()}=1 and {strlen()}&gt;0</expression>
+                            <name>Nginx: Version has changed (new version: {ITEM.VALUE})</name>
+                            <priority>INFO</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Nginx: connections waiting</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.waiting</key>
+                    <delay>0</delay>
+                    <history>7d</history>
                     <description>The current number of idle client connections waiting for a request</description>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
-                            <name>Nginx stub_status</name>
+                            <name>Nginx status</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
-                            <params>Reading: ([0-9]+) Writing: ([0-9]+) Waiting: ([0-9]+)
-\3</params>
+                            <type>REGEX</type>
+                            <params>Waiting: ([0-9]+)
+\1</params>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
-                        <key>ngx_stub_status</key>
+                        <key>nginx.stub_status</key>
                     </master_item>
                 </item>
                 <item>
-                    <name>Connections writing</name>
-                    <type>18</type>
-                    <snmp_community/>
-                    <snmp_oid/>
-                    <key>ngx_stub_status.Writing</key>
+                    <name>Nginx: connections writing</name>
+                    <type>DEPENDENT</type>
+                    <key>nginx.stub_status.writing</key>
                     <delay>0</delay>
                     <history>7d</history>
-                    <trends>365d</trends>
-                    <status>0</status>
-                    <value_type>3</value_type>
-                    <allowed_hosts/>
-                    <units/>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
-                    <params/>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
                     <description>The current number of connections where nginx is writing the response back to the client</description>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
-                            <name>Nginx stub_status</name>
+                            <name>Nginx status</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     <preprocessing>
                         <step>
-                            <type>5</type>
-                            <params>Reading: ([0-9]+) Writing: ([0-9]+) Waiting: ([0-9]+)
-\2</params>
+                            <type>REGEX</type>
+                            <params>Writing: ([0-9]+)
+\1</params>
                         </step>
                     </preprocessing>
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
                     <master_item>
-                        <key>ngx_stub_status</key>
+                        <key>nginx.stub_status</key>
                     </master_item>
                 </item>
             </items>
-            <discovery_rules/>
-            <httptests/>
             <macros>
                 <macro>
-                    <macro>{$NGX_STATUS_PORT}</macro>
+                    <macro>{$NGINX.STUB_STATUS.LOCATION}</macro>
+                    <value>nginx-stats</value>
+                </macro>
+                <macro>
+                    <macro>{$NGINX.STUB_STATUS.PORT}</macro>
                     <value>80</value>
                 </macro>
                 <macro>
-                    <macro>{$NGX_STATUS_URL}</macro>
-                    <value>nginx-stats</value>
+                    <macro>{$NGINX.STUB_STATUS.SCHEME}</macro>
+                    <value>http</value>
                 </macro>
             </macros>
-            <templates/>
-            <screens/>
+            <screens>
+                <screen>
+                    <name>Nginx: connections</name>
+                    <hsize>2</hsize>
+                    <vsize>1</vsize>
+                    <screen_items>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Nginx: Connections state</name>
+                                <host>Template Nginx stub_status</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>0</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                        <screen_item>
+                            <resourcetype>0</resourcetype>
+                            <style>0</style>
+                            <resource>
+                                <name>Nginx: Requests</name>
+                                <host>Template Nginx stub_status</host>
+                            </resource>
+                            <width>600</width>
+                            <height>100</height>
+                            <x>1</x>
+                            <y>0</y>
+                            <colspan>1</colspan>
+                            <rowspan>1</rowspan>
+                            <elements>0</elements>
+                            <valign>0</valign>
+                            <halign>0</halign>
+                            <dynamic>0</dynamic>
+                            <sort_triggers>0</sort_triggers>
+                            <url/>
+                            <application/>
+                            <max_columns>3</max_columns>
+                        </screen_item>
+                    </screen_items>
+                </screen>
+            </screens>
         </template>
     </templates>
-    <triggers>
-        <trigger>
-            <expression>{Template Nginx stub_status:ngx_stub_status.nodata(5m)}=1</expression>
-            <recovery_mode>0</recovery_mode>
-            <recovery_expression/>
-            <name>Nginx status nodata for 5 minutes on {HOST.NAME}</name>
-            <correlation_mode>0</correlation_mode>
-            <correlation_tag/>
-            <url/>
-            <status>0</status>
-            <priority>2</priority>
-            <description/>
-            <type>0</type>
-            <manual_close>0</manual_close>
-            <dependencies/>
-            <tags/>
-        </trigger>
-    </triggers>
     <graphs>
         <graph>
-            <name>Nginx stub: Connections</name>
-            <width>900</width>
-            <height>200</height>
-            <yaxismin>0.0000</yaxismin>
-            <yaxismax>100.0000</yaxismax>
-            <show_work_period>1</show_work_period>
-            <show_triggers>1</show_triggers>
-            <type>0</type>
-            <show_legend>1</show_legend>
-            <show_3d>0</show_3d>
-            <percent_left>0.0000</percent_left>
-            <percent_right>0.0000</percent_right>
-            <ymin_type_1>0</ymin_type_1>
-            <ymax_type_1>0</ymax_type_1>
-            <ymin_item_1>0</ymin_item_1>
-            <ymax_item_1>0</ymax_item_1>
+            <name>Nginx: Connections state</name>
+            <width>600</width>
+            <show_work_period>NO</show_work_period>
             <graph_items>
                 <graph_item>
-                    <sortorder>0</sortorder>
-                    <drawtype>2</drawtype>
-                    <color>EE0000</color>
-                    <yaxisside>1</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
-                    <item>
-                        <host>Template Nginx stub_status</host>
-                        <key>ngx_stub_status.active</key>
-                    </item>
-                </graph_item>
-                <graph_item>
                     <sortorder>1</sortorder>
-                    <drawtype>0</drawtype>
-                    <color>EEEE00</color>
-                    <yaxisside>1</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
+                    <drawtype>BOLD_LINE</drawtype>
+                    <color>EE0000</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>Template Nginx stub_status</host>
-                        <key>ngx_stub_status.Reading</key>
+                        <key>nginx.stub_status.active</key>
                     </item>
                 </graph_item>
                 <graph_item>
                     <sortorder>2</sortorder>
-                    <drawtype>0</drawtype>
-                    <color>00CC00</color>
-                    <yaxisside>1</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
+                    <color>EEEE00</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>Template Nginx stub_status</host>
-                        <key>ngx_stub_status.Waiting</key>
+                        <key>nginx.stub_status.reading</key>
                     </item>
                 </graph_item>
                 <graph_item>
                     <sortorder>3</sortorder>
-                    <drawtype>0</drawtype>
-                    <color>EE00EE</color>
-                    <yaxisside>1</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
+                    <color>00CC00</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>Template Nginx stub_status</host>
-                        <key>ngx_stub_status.Writing</key>
+                        <key>nginx.stub_status.waiting</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>EE00EE</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>Template Nginx stub_status</host>
+                        <key>nginx.stub_status.writing</key>
                     </item>
                 </graph_item>
             </graph_items>
         </graph>
         <graph>
-            <name>Nginx stub: Requests</name>
-            <width>900</width>
-            <height>200</height>
-            <yaxismin>0.0000</yaxismin>
-            <yaxismax>100.0000</yaxismax>
-            <show_work_period>1</show_work_period>
-            <show_triggers>1</show_triggers>
-            <type>0</type>
-            <show_legend>1</show_legend>
-            <show_3d>0</show_3d>
-            <percent_left>0.0000</percent_left>
-            <percent_right>0.0000</percent_right>
-            <ymin_type_1>0</ymin_type_1>
-            <ymax_type_1>0</ymax_type_1>
-            <ymin_item_1>0</ymin_item_1>
-            <ymax_item_1>0</ymax_item_1>
+            <name>Nginx: Requests</name>
+            <width>600</width>
+            <show_work_period>NO</show_work_period>
             <graph_items>
                 <graph_item>
-                    <sortorder>0</sortorder>
-                    <drawtype>2</drawtype>
-                    <color>00EE00</color>
-                    <yaxisside>1</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
-                    <item>
-                        <host>Template Nginx stub_status</host>
-                        <key>ngx_stub_status.accepts</key>
-                    </item>
-                </graph_item>
-                <graph_item>
                     <sortorder>1</sortorder>
-                    <drawtype>0</drawtype>
-                    <color>0000C8</color>
-                    <yaxisside>1</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
+                    <drawtype>GRADIENT_LINE</drawtype>
+                    <color>FF3333</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>Template Nginx stub_status</host>
-                        <key>ngx_stub_status.handled</key>
+                        <key>nginx.stub_status.requests.rate</key>
                     </item>
                 </graph_item>
                 <graph_item>
                     <sortorder>2</sortorder>
-                    <drawtype>5</drawtype>
-                    <color>FF3333</color>
-                    <yaxisside>1</yaxisside>
-                    <calc_fnc>2</calc_fnc>
-                    <type>0</type>
+                    <drawtype>BOLD_LINE</drawtype>
+                    <color>00EE00</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <calc_fnc>ALL</calc_fnc>
                     <item>
                         <host>Template Nginx stub_status</host>
-                        <key>ngx_stub_status.requests</key>
+                        <key>nginx.stub_status.accepted.rate</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>0000C8</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>Template Nginx stub_status</host>
+                        <key>nginx.stub_status.handled.rate</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>263238</color>
+                    <yaxisside>RIGHT</yaxisside>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>Template Nginx stub_status</host>
+                        <key>nginx.stub_status.dropped.rate</key>
                     </item>
                 </graph_item>
             </graph_items>
